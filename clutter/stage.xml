@@ -1,0 +1,119 @@
+<module name='stage'>
+  <use name='super::actor::Actor'/>
+
+  <gobject name='Stage' prefix='clutter_stage_'>
+    <interface name='Actor'/>
+
+    <constructor name='new'/>
+
+    <!-- TODO: clutter_stage_get_actor_at_pos -->
+
+    <fn name='ensure_current'/>
+    <fn name='ensure_viewport'/>
+    <fn name='ensure_redraw'/>
+
+    <!-- TODO: clutter_stage_event -->
+
+    <fn name='set_key_focus'>
+      <argument name='actor' type='T' implements='Actor'/>
+    </fn>
+
+    <fn name='get_key_focus'>
+      <result type='{super::actor::ActorRef}'/>
+    </fn>
+
+    <!-- TODO: clutter_stage_read_pixels -->
+
+    <fn name='set_throttle_motion_events'>
+      <argument name='throttle' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_throttle_motion_events'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='set_use_alpha'>
+      <argument name='use_alpha' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_use_alpha'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='set_minimum_size'>
+      <argument name='width' type='unsigned int'/>
+      <argument name='height' type='unsigned int'/>
+    </fn>
+
+    <fn name='get_minimum_size'>
+      <argument name='width' type='unsigned int' transformer='zero'/>
+      <argument name='height' type='unsigned int' transformer='zero'/>
+      <result name='width' type='unsigned int' transformer='out'/>
+      <result name='height' type='unsigned int' transformer='out'/>
+    </fn>
+
+    <fn name='set_no_clear_hint'>
+      <argument name='use_alpha' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_no_clear_hint'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_stage_get_redraw_clip_bounds -->
+
+    <fn name='set_motion_events_enabled'>
+      <argument name='enabled' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_motion_events_enabled'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_stage_set_perspective -->
+    <!-- TODO: clutter_stage_get_perspective -->
+
+    <fn name='set_title'>
+      <argument name='title' type='string' pass_by='ref' transformer='cstring'/>
+    </fn>
+
+    <fn name='get_title'>
+      <result type='{std::c_str::CString}' transformer='cstring'/>
+    </fn>
+
+    <fn name='set_user_resizable'>
+      <argument name='resizable' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_user_resizable'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='set_fullscreen'>
+      <argument name='fullscreen' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_fullscreen'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='show_cursor'/>
+    <fn name='hide_cursor'/>
+
+    <fn name='set_accept_focus'>
+      <argument name='accept_focus' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_accept_focus'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_stage_set_paint_callback -->
+
+    <fn name='set_sync_delay'>
+      <argument name='accept_focus' type='i32'/>
+    </fn>
+
+    <fn name='skip_sync_delay'/>
+  </gobject>
+</module>

@@ -1,0 +1,591 @@
+<module name='actor'>
+  <use name='cairo'/>
+
+  <enum name='Flags'>
+    <value name='Mapped' value='2'/>
+    <value name='Realized' value='4'/>
+    <value name='Reactive' value='8'/>
+    <value name='Visible' value='16'/>
+    <value name='NoLayout' value='32'/>
+  </enum>
+
+  <!-- TODO: ClutterMargin -->
+  <!-- TODO: clutter_actor_iter -->
+
+  <gobject name='Actor' prefix='clutter_actor_'>
+    <constructor name='new'/>
+
+    <fn name='set_flags'>
+      <argument name='flags' type='[Flags]'/>
+    </fn>
+
+    <fn name='unset_flags'>
+      <argument name='flags' type='[Flags]'/>
+    </fn>
+
+    <fn name='get_flags'>
+      <result type='[Flags]'/>
+    </fn>
+
+    <fn name='set_name'>
+      <argument name='name' type='string' pass_by='ref' transformer='cstring'/>
+    </fn>
+
+    <fn name='get_name'>
+      <result type='{std::c_str::CString}' transformer='cstring'/>
+    </fn>
+
+    <fn name='get_gid'>
+      <result type='u32'/>
+    </fn>
+
+    <fn name='show'/>
+    <fn name='show_all'/>
+    <fn name='hide'/>
+    <fn name='hide_all'/>
+    <fn name='realize'/>
+    <fn name='unrealize'/>
+    <fn name='paint'/>
+    <fn name='continue_paint'/>
+    <fn name='queue_redraw'/>
+
+    <fn name='queue_redraw_with_clip'>
+      <argument name='clip' type='{cairo::region::Rectangle}' pass_by='ref'/>
+    </fn>
+
+    <fn name='queue_relayout'/>
+
+    <!-- TODO: clutter_actor_event -->
+
+    <fn name='should_pick_repaint'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='map'/>
+    <fn name='unmap'/>
+
+    <fn name='has_overlaps'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='has_mapped_clones'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_allocate -->
+    <!-- TODO: clutter_actor_allocate_preferred_size -->
+    <!-- TODO: clutter_actor_allocate_available_size -->
+    <!-- TODO: clutter_actor_allocate_align_fill -->
+    <!-- TODO: clutter_actor_set_allocation -->
+    <!-- TODO: clutter_actor_get_allocation_box -->
+    <!-- TODO: clutter_actor_get_allocation_geometry -->
+    <!-- TODO: clutter_actor_get_allocation_vertices -->
+
+    <fn name='get_preferred_size'>
+      <argument name='min_width_p' type='float' transformer='zero'/>
+      <argument name='min_height_p' type='float' transformer='zero'/>
+      <argument name='natural_width_p' type='float' transformer='zero'/>
+      <argument name='natural_height_p' type='float' transformer='zero'/>
+      <result name='min_width_p' type='float' transformer='out'/>
+      <result name='min_height_p' type='float' transformer='out'/>
+      <result name='natural_width_p' type='float' transformer='out'/>
+      <result name='natural_height_p' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='get_preferred_width'>
+      <argument name='for_height' type='float'/>
+      <argument name='min_width_p' type='float' transformer='zero'/>
+      <argument name='natural_width_p' type='float' transformer='zero'/>
+      <result name='min_width_p' type='float' transformer='out'/>
+      <result name='natural_width_p' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='get_preferred_height'>
+      <argument name='for_width' type='float'/>
+      <argument name='min_height_p' type='float' transformer='zero'/>
+      <argument name='natural_height_p' type='float' transformer='zero'/>
+      <result name='min_height_p' type='float' transformer='out'/>
+      <result name='natural_height_p' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='set_fixed_position_set'>
+      <argument name='fixed_position_set' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_fixed_position_set'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_set_request_mode -->
+    <!-- TODO: clutter_actor_get_request_mode -->
+
+    <fn name='has_allocation'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_set_x_align -->
+    <!-- TODO: clutter_actor_get_x_align -->
+    <!-- TODO: clutter_actor_set_y_align -->
+    <!-- TODO: clutter_actor_get_y_align -->
+    <!-- TODO: clutter_actor_set_margin -->
+    <!-- TODO: clutter_actor_get_margin -->
+    <!-- TODO: clutter_actor_set_margin_top -->
+    <!-- TODO: clutter_actor_get_margin_top -->
+    <!-- TODO: clutter_actor_set_margin_right -->
+    <!-- TODO: clutter_actor_get_margin_right -->
+    <!-- TODO: clutter_actor_set_margin_bottom -->
+    <!-- TODO: clutter_actor_get_margin_bottom -->
+    <!-- TODO: clutter_actor_set_margin_left -->
+    <!-- TODO: clutter_actor_get_margin_left -->
+
+    <fn name='set_x_expand'>
+      <argument name='expand' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_x_expand'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='set_y_expand'>
+      <argument name='expand' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_y_expand'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='needs_expand'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_set_layout_manager -->
+    <!-- TODO: clutter_actor_get_layout_manager -->
+
+    <!-- TODO: clutter_actor_set_background_color -->
+    <!-- TODO: clutter_actor_get_background_color -->
+
+    <!-- TODO: clutter_actor_set_geometry -->
+    <!-- TODO: clutter_actor_get_geometry -->
+
+    <fn name='set_size'>
+      <argument name='for_width' type='float'/>
+      <argument name='for_height' type='float'/>
+    </fn>
+
+    <fn name='get_size'>
+      <argument name='width' type='float' transformer='zero'/>
+      <argument name='height' type='float' transformer='zero'/>
+      <result name='width' type='float' transformer='out'/>
+      <result name='height' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='set_position'>
+      <argument name='x' type='float'/>
+      <argument name='y' type='float'/>
+    </fn>
+
+    <fn name='get_position'>
+      <argument name='x' type='float' transformer='zero'/>
+      <argument name='y' type='float' transformer='zero'/>
+      <result name='x' type='float' transformer='out'/>
+      <result name='y' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='set_width'>
+      <argument name='width' type='float'/>
+    </fn>
+
+    <fn name='get_width'>
+      <result type='float'/>
+    </fn>
+
+    <fn name='set_height'>
+      <argument name='height' type='float'/>
+    </fn>
+
+    <fn name='get_height'>
+      <result type='float'/>
+    </fn>
+
+    <fn name='set_x'>
+      <argument name='x' type='float'/>
+    </fn>
+
+    <fn name='get_x'>
+      <result type='float'/>
+    </fn>
+
+    <fn name='set_y'>
+      <argument name='y' type='float'/>
+    </fn>
+
+    <fn name='get_y'>
+      <result type='float'/>
+    </fn>
+
+    <fn name='move_by'>
+      <argument name='dx' type='float'/>
+      <argument name='dy' type='float'/>
+    </fn>
+
+    <fn name='set_z_position'>
+      <argument name='y' type='float'/>
+    </fn>
+
+    <fn name='get_z_position'>
+      <result type='float'/>
+    </fn>
+
+    <fn name='set_pivotal_point'>
+      <argument name='pivot_x' type='float'/>
+      <argument name='pivot_y' type='float'/>
+    </fn>
+
+    <fn name='get_pivotal_point'>
+      <argument name='pivot_x' type='float' transformer='zero'/>
+      <argument name='pivot_y' type='float' transformer='zero'/>
+      <result name='pivot_x' type='float' transformer='out'/>
+      <result name='pivot_y' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='set_pivot_point_z'>
+      <argument name='pivot_z' type='float'/>
+    </fn>
+
+    <fn name='get_pivot_point_z'>
+      <result type='float'/>
+    </fn>
+
+    <fn name='set_scale'>
+      <argument name='scale_x' type='float'/>
+      <argument name='scale_y' type='float'/>
+    </fn>
+
+    <fn name='get_scale'>
+      <argument name='scale_x' type='float' transformer='zero'/>
+      <argument name='scale_y' type='float' transformer='zero'/>
+      <result name='scale_x' type='float' transformer='out'/>
+      <result name='scale_y' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='set_scale_z'>
+      <argument name='pivot_z' type='float'/>
+    </fn>
+
+    <fn name='get_scale_z'>
+      <result type='float'/>
+    </fn>
+
+    <fn name='is_scaled'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_set_rotation_angle -->
+    <!-- TODO: clutter_actor_get_rotation_angle -->
+
+    <fn name='is_rotated'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='set_translation'>
+      <argument name='translate_x' type='float'/>
+      <argument name='translate_y' type='float'/>
+      <argument name='translate_z' type='float'/>
+    </fn>
+
+    <fn name='get_translation'>
+      <argument name='translate_x' type='float' transformer='zero'/>
+      <argument name='translate_y' type='float' transformer='zero'/>
+      <argument name='translate_z' type='float' transformer='zero'/>
+      <result name='translate_x' type='float' transformer='out'/>
+      <result name='translate_y' type='float' transformer='out'/>
+      <result name='translate_z' type='float' transformer='out'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_set_transform -->
+    <!-- TODO: clutter_actor_get_transform -->
+    <!-- TODO: clutter_actor_set_child_transform -->
+    <!-- TODO: clutter_actor_get_child_transform -->
+    <!-- TODO: clutter_actor_apply_transform_to_point -->
+
+    <fn name='apply_transform_to_point'>
+      <argument name='x' type='float'/>
+      <argument name='y' type='float'/>
+      <argument name='x_out' type='float' transformer='zero'/>
+      <argument name='y_out' type='float' transformer='zero'/>
+      <result type='i32' transformer='compare' value='0'/>
+      <result name='x_out' type='float' transformer='out'/>
+      <result name='y_out' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='transform_stage_point'>
+      <argument name='x' type='float'/>
+      <argument name='y' type='float'/>
+      <argument name='x_out' type='float' transformer='zero'/>
+      <argument name='y_out' type='float' transformer='zero'/>
+      <result type='i32' transformer='compare' value='0'/>
+      <result name='x_out' type='float' transformer='out'/>
+      <result name='y_out' type='float' transformer='out'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_apply_relative_transform_to_point -->
+
+    <fn name='get_transformed_position'>
+      <argument name='x' type='float' transformer='zero'/>
+      <argument name='y' type='float' transformer='zero'/>
+      <result name='x' type='float' transformer='out'/>
+      <result name='y' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='get_transformed_size'>
+      <argument name='width' type='float' transformer='zero'/>
+      <argument name='height' type='float' transformer='zero'/>
+      <result name='width' type='float' transformer='out'/>
+      <result name='height' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='get_paint_opacity'>
+      <result type='u8'/>
+    </fn>
+
+    <fn name='get_paint_visibility'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_get_abs_allocation_vertices -->
+    <!-- TODO: clutter_actor_get_paint_volume -->
+    <!-- TODO: clutter_actor_get_paint_box -->
+    <!-- TODO: clutter_actor_get_transformed_paint_volume -->
+    <!-- TODO: clutter_actor_get_default_paint_volume -->
+
+    <!-- TODO: clutter_actor_set_content -->
+    <!-- TODO: clutter_actor_get_content -->
+    <!-- TODO: clutter_actor_set_content_gravity -->
+    <!-- TODO: clutter_actor_get_content_gravity -->
+    <!-- TODO: clutter_actor_set_content_scaling_filters -->
+    <!-- TODO: clutter_actor_get_content_scaling_filters -->
+    <!-- TODO: clutter_actor_set_content_repeat -->
+    <!-- TODO: clutter_actor_get_content_repeat -->
+    <!-- TODO: clutter_actor_get_content_box -->
+
+    <fn name='set_clip'>
+      <argument name='xoff' type='float'/>
+      <argument name='yoff' type='float'/>
+      <argument name='width' type='float'/>
+      <argument name='height' type='float'/>
+    </fn>
+
+    <fn name='remove_clip'/>
+
+    <fn name='has_clip'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='get_clip'>
+      <argument name='xoff' type='float' transformer='zero'/>
+      <argument name='yoff' type='float' transformer='zero'/>
+      <argument name='width' type='float' transformer='zero'/>
+      <argument name='height' type='float' transformer='zero'/>
+      <result name='xoff' type='float' transformer='out'/>
+      <result name='yoff' type='float' transformer='out'/>
+      <result name='width' type='float' transformer='out'/>
+      <result name='height' type='float' transformer='out'/>
+    </fn>
+
+    <fn name='set_clip_to_allocation'>
+      <argument name='clip_set' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_clip_to_allocation'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='set_opacity'>
+      <argument name='opacity' type='u8'/>
+    </fn>
+
+    <fn name='get_opacity'>
+      <result type='u8'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_set_offscreen_redirect -->
+    <!-- TODO: clutter_actor_get_offscreen_redirect -->
+
+    <fn name='is_in_clone_paint'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='add_child'>
+      <argument name='child' type='T' implements='Actor'/>
+    </fn>
+
+    <fn name='insert_child_above'>
+      <argument name='child' type='T' implements='Actor'/>
+      <argument name='sibling' type='U' implements='Actor'/>
+    </fn>
+
+    <fn name='insert_child_at_index'>
+      <argument name='child' type='T' implements='Actor'/>
+      <argument name='index' type='int'/>
+    </fn>
+
+    <fn name='insert_child_below'>
+      <argument name='child' type='T' implements='Actor'/>
+      <argument name='sibling' type='U' implements='Actor'/>
+    </fn>
+
+    <fn name='replace_child'>
+      <argument name='old_child' type='T' implements='Actor'/>
+      <argument name='new_child' type='U' implements='Actor'/>
+    </fn>
+
+    <fn name='remove_child'>
+      <argument name='child' type='T' implements='Actor'/>
+    </fn>
+
+    <fn name='remove_all_children'/>
+    <fn name='destroy_all_children'/>
+
+    <fn name='get_first_child'>
+      <result type='{ActorRef}'/>
+    </fn>
+
+    <fn name='get_next_sibling'>
+      <result type='{ActorRef}'/>
+    </fn>
+
+    <fn name='get_previous_sibling'>
+      <result type='{ActorRef}'/>
+    </fn>
+
+    <fn name='get_last_child'>
+      <result type='{ActorRef}'/>
+    </fn>
+
+    <fn name='get_child_at_index'>
+      <argument name='index' type='int'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_get_children -->
+
+    <fn name='get_n_children'>
+      <result type='int'/>
+    </fn>
+
+    <fn name='get_parent'>
+      <result type='{ActorRef}'/>
+    </fn>
+
+    <fn name='set_child_above_sibling'>
+      <argument name='child' type='T' implements='Actor'/>
+      <argument name='sibling' type='U' implements='Actor'/>
+    </fn>
+
+    <fn name='set_child_at_index'>
+      <argument name='child' type='T' implements='Actor'/>
+      <argument name='index' type='int'/>
+    </fn>
+
+    <fn name='set_child_below_sibling'>
+      <argument name='child' type='T' implements='Actor'/>
+      <argument name='sibling' type='U' implements='Actor'/>
+    </fn>
+
+    <fn name='contains'>
+      <argument name='descendant' type='T' implements='Actor'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='get_stage'>
+      <result type='{ActorRef}'/>
+    </fn>
+
+    <fn name='save_easing_state'/>
+    <fn name='restore_easing_state'/>
+
+    <fn name='set_easing_duration'>
+      <argument name='msecs' type='unsigned int'/>
+    </fn>
+
+    <fn name='get_easing_duration'>
+      <result type='unsigned int'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_set_easing_mode -->
+    <!-- TODO: clutter_actor_get_easing_mode -->
+
+    <fn name='set_easing_delay'>
+      <argument name='msecs' type='unsigned int'/>
+    </fn>
+
+    <fn name='get_easing_delay'>
+      <result type='unsigned int'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_get_transition -->
+    <!-- TODO: clutter_actor_add_transition -->
+    <!-- TODO: clutter_actor_remove_transition -->
+    <!-- TODO: clutter_actor_remove_all_transitions -->
+
+    <fn name='set_reactive'>
+      <argument name='msecs' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_reactive'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='has_key_focus'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='grap_key_focus'/>
+
+    <fn name='has_pointer'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_get_pango_context -->
+    <!-- TODO: clutter_actor_create_pango_context -->
+    <!-- TODO: clutter_actor_create_pango_layout -->
+    <!-- TODO: clutter_actor_set_text_direction -->
+    <!-- TODO: clutter_actor_get_text_direction -->
+    <!-- TODO: clutter_actor_get_accessible -->
+    <!-- TODO: clutter_actor_add_action -->
+    <!-- TODO: clutter_actor_add_action_with_name -->
+    <!-- TODO: clutter_actor_remove_action -->
+    <!-- TODO: clutter_actor_remove_action_by_name -->
+
+    <fn name='has_actions'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_actor_get_actions -->
+    <!-- TODO: clutter_actor_get_action -->
+    <!-- TODO: clutter_actor_clear_actions -->
+    <!-- TODO: clutter_actor_add_constraint -->
+    <!-- TODO: clutter_actor_add_constraint_with_name -->
+    <!-- TODO: clutter_actor_remove_constraint -->
+    <!-- TODO: clutter_actor_remove_constraint_by_name -->
+    <!-- TODO: clutter_actor_has_constraints -->
+    <!-- TODO: clutter_actor_get_constraints -->
+    <!-- TODO: clutter_actor_get_constraint -->
+    <!-- TODO: clutter_actor_clear_constraints -->
+    <!-- TODO: clutter_actor_add_effect -->
+    <!-- TODO: clutter_actor_add_effect_with_name -->
+    <!-- TODO: clutter_actor_remove_effect -->
+    <!-- TODO: clutter_actor_remove_effect_by_name -->
+    <!-- TODO: clutter_actor_has_effects -->
+    <!-- TODO: clutter_actor_get_effects -->
+    <!-- TODO: clutter_actor_get_effect -->
+    <!-- TODO: clutter_actor_clear_effects -->
+  </gobject>
+
+  <!-- TODO: Fix linking issue
+  <implementation trait='std::ops::Drop' for='ActorRef'>
+    <fn name='drop' foreign='clutter_actor_destroy'>
+      <argument pass_by='mut-self' transformer='opaque'/>
+    </fn>
+  </implementation>
+  -->
+</module>

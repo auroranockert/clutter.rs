@@ -1,0 +1,17 @@
+<crate name='clutter'>
+  <module name='cairo' extern='true'/>
+
+  <library name='clutter-1.0'/>
+
+  <!-- TODO: Handle this somehow -->
+  <fn name='init' foreign='clutter_init'>
+    <argument name='argc' type='int' pass_by='mut-ref' value='std::ptr::mut_null()'/>
+    <argument name='argv' type='int' pass_by='mut-ref' value='std::ptr::mut_null()'/>
+    <!-- TODO: Handle result -->
+  </fn>
+  
+  <fn name='main' foreign='clutter_main'/>
+
+  <module file='clutter/actor'/>
+  <module file='clutter/stage'/>
+</crate>
