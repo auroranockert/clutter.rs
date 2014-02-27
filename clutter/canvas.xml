@@ -1,0 +1,23 @@
+<module name='canvas'>
+  <use name='cairo'/>
+  <use name='super::content::Content'/>
+
+  <gobject name='Canvas' prefix='clutter_canvas_'>
+    <interface name='Content'/>
+
+    <constructor name='new'/>
+
+    <fn name='set_size'>
+      <argument name='width' type='int'/>
+      <argument name='height' type='int'/>
+    </fn>
+
+    <signal name='draw'>
+      <argument name='canvas' type='{CanvasRef}' pass_by='mut-ref' transformer='gobject'/>
+      <argument name='cairo' type='{cairo::Cairo}' pass_by='mut-ref' transformer='gobject'/>
+      <argument name='width' type='int'/>
+      <argument name='height' type='int'/>
+      <result type='bool' as='i32'/>
+    </signal>
+  </gobject>
+</module>

@@ -1,6 +1,7 @@
 <crate name='clutter'>
   <module name='cairo' extern='true'/>
 
+  <library name='gobject-2.0'/>
   <library name='clutter-1.0'/>
 
   <!-- TODO: Handle this somehow -->
@@ -9,9 +10,23 @@
     <argument name='argv' type='int' pass_by='mut-ref' value='std::ptr::mut_null()'/>
     <!-- TODO: Handle result -->
   </fn>
-  
+
   <fn name='main' foreign='clutter_main'/>
+  <fn name='main_quit' foreign='clutter_main_quit'/>
+
+  <module name='scaling'>
+    <enum name='Filter'>
+      <value name='Linear'/>
+      <value name='Nearest'/>
+      <value name='Trilinear'/>
+    </enum>
+  </module>
 
   <module file='clutter/actor'/>
   <module file='clutter/stage'/>
+
+  <module file='clutter/constraint'/>
+
+  <module file='clutter/content'/>
+  <module file='clutter/canvas'/>
 </crate>

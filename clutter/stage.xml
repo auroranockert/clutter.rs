@@ -115,5 +115,23 @@
     </fn>
 
     <fn name='skip_sync_delay'/>
+
+    <signal name='activate'>
+      <argument name='stage' type='{StageRef}' pass_by='mut-ref' transformer='gobject'/>
+    </signal>
+
+    <signal name='deactivate'>
+      <argument name='stage' type='{StageRef}' pass_by='mut-ref' transformer='gobject'/>
+    </signal>
+
+    <!-- TODO: delete-event -->
+
+    <signal name='fullscreen'>
+      <argument name='stage' type='{StageRef}' pass_by='mut-ref' transformer='gobject'/>
+    </signal>
+
+    <signal name='unfullscreen'>
+      <argument name='stage' type='{StageRef}' pass_by='mut-ref' transformer='gobject'/>
+    </signal>
   </gobject>
 </module>

@@ -1,5 +1,8 @@
 extern mod cairo;
 
+#[link(name = "gobject-2.0")]
+extern {}
+
 #[link(name = "clutter-1.0")]
 extern {}
 
@@ -15,9 +18,28 @@ pub fn main() {
   }
 }
 
+pub fn main_quit() {
+  unsafe {
+    clutter_main_quit();
+  }
+}
+
+pub mod scaling {
+  use std;
+
+  #[repr(i32)]
+  pub enum Filter {
+    Linear = 0,
+    Nearest = 1,
+    Trilinear = 2
+  }
+}
+
 pub mod actor {
   use std;
   use cairo;
+  use super::content::Content;
+  use super::constraint::Constraint;
 
   #[repr(i32)]
   pub enum Flags {
@@ -26,6 +48,13 @@ pub mod actor {
     Reactive = 8,
     Visible = 16,
     NoLayout = 32
+  }
+
+  pub struct Box {
+    x1: f32,
+    y1: f32,
+    x2: f32,
+    y2: f32
   }
 
   pub struct ActorRef {
@@ -66,7 +95,7 @@ pub mod actor {
     fn set_name(&mut self, name: &str) {
       unsafe {
         use std::c_str::ToCStr;
-        clutter_actor_set_name(self.as_actor(), name.to_c_str());
+        clutter_actor_set_name(self.as_actor(), name.to_c_str().unwrap());
       }
     }
 
@@ -502,6 +531,34 @@ pub mod actor {
       }
     }
 
+    fn set_content<T: Content>(&mut self, content: &mut T) {
+      unsafe {
+        clutter_actor_set_content(self.as_actor(), content.as_content());
+      }
+    }
+
+    fn get_content(&mut self) -> super::content::ContentRef {
+      unsafe {
+        let foreign_result = clutter_actor_get_content(self.as_actor());
+        return foreign_result;
+      }
+    }
+
+    fn set_content_scaling_filters(&mut self, min: super::scaling::Filter, mag: super::scaling::Filter) {
+      unsafe {
+        clutter_actor_set_content_scaling_filters(self.as_actor(), min, mag);
+      }
+    }
+
+    fn get_content_scaling_filters(&mut self) -> (super::scaling::Filter, super::scaling::Filter) {
+      unsafe {
+        let mut min:super::scaling::Filter = std::unstable::intrinsics::init();
+        let mut mag:super::scaling::Filter = std::unstable::intrinsics::init();
+        clutter_actor_get_content_scaling_filters(self.as_actor(), &mut min, &mut mag);
+        return (min, mag);
+      }
+    }
+
     fn set_clip(&mut self, xoff: f32, yoff: f32, width: f32, height: f32) {
       unsafe {
         clutter_actor_set_clip(self.as_actor(), xoff, yoff, width, height);
@@ -565,37 +622,37 @@ pub mod actor {
       }
     }
 
-    fn add_child<T: Actor>(&mut self, child: T) {
+    fn add_child<T: Actor>(&mut self, child: &mut T) {
       unsafe {
         clutter_actor_add_child(self.as_actor(), child.as_actor());
       }
     }
 
-    fn insert_child_above<T: Actor, U: Actor>(&mut self, child: T, sibling: U) {
+    fn insert_child_above<T: Actor, U: Actor>(&mut self, child: &mut T, sibling: &mut U) {
       unsafe {
         clutter_actor_insert_child_above(self.as_actor(), child.as_actor(), sibling.as_actor());
       }
     }
 
-    fn insert_child_at_index<T: Actor>(&mut self, child: T, index: i32) {
+    fn insert_child_at_index<T: Actor>(&mut self, child: &mut T, index: i32) {
       unsafe {
         clutter_actor_insert_child_at_index(self.as_actor(), child.as_actor(), index);
       }
     }
 
-    fn insert_child_below<T: Actor, U: Actor>(&mut self, child: T, sibling: U) {
+    fn insert_child_below<T: Actor, U: Actor>(&mut self, child: &mut T, sibling: &mut U) {
       unsafe {
         clutter_actor_insert_child_below(self.as_actor(), child.as_actor(), sibling.as_actor());
       }
     }
 
-    fn replace_child<T: Actor, U: Actor>(&mut self, old_child: T, new_child: U) {
+    fn replace_child<T: Actor, U: Actor>(&mut self, old_child: &mut T, new_child: &mut U) {
       unsafe {
         clutter_actor_replace_child(self.as_actor(), old_child.as_actor(), new_child.as_actor());
       }
     }
 
-    fn remove_child<T: Actor>(&mut self, child: T) {
+    fn remove_child<T: Actor>(&mut self, child: &mut T) {
       unsafe {
         clutter_actor_remove_child(self.as_actor(), child.as_actor());
       }
@@ -661,25 +718,25 @@ pub mod actor {
       }
     }
 
-    fn set_child_above_sibling<T: Actor, U: Actor>(&mut self, child: T, sibling: U) {
+    fn set_child_above_sibling<T: Actor, U: Actor>(&mut self, child: &mut T, sibling: &mut U) {
       unsafe {
         clutter_actor_set_child_above_sibling(self.as_actor(), child.as_actor(), sibling.as_actor());
       }
     }
 
-    fn set_child_at_index<T: Actor>(&mut self, child: T, index: i32) {
+    fn set_child_at_index<T: Actor>(&mut self, child: &mut T, index: i32) {
       unsafe {
         clutter_actor_set_child_at_index(self.as_actor(), child.as_actor(), index);
       }
     }
 
-    fn set_child_below_sibling<T: Actor, U: Actor>(&mut self, child: T, sibling: U) {
+    fn set_child_below_sibling<T: Actor, U: Actor>(&mut self, child: &mut T, sibling: &mut U) {
       unsafe {
         clutter_actor_set_child_below_sibling(self.as_actor(), child.as_actor(), sibling.as_actor());
       }
     }
 
-    fn contains<T: Actor>(&mut self, descendant: T) -> bool {
+    fn contains<T: Actor>(&mut self, descendant: &mut T) -> bool {
       unsafe {
         let foreign_result = clutter_actor_contains(self.as_actor(), descendant.as_actor());
         return foreign_result != 0;
@@ -731,9 +788,9 @@ pub mod actor {
       }
     }
 
-    fn set_reactive(&mut self, msecs: bool) {
+    fn set_reactive(&mut self, reactive: bool) {
       unsafe {
-        clutter_actor_set_reactive(self.as_actor(), (msecs as i32));
+        clutter_actor_set_reactive(self.as_actor(), (reactive as i32));
       }
     }
 
@@ -770,6 +827,24 @@ pub mod actor {
         return foreign_result != 0;
       }
     }
+
+    fn add_constraint<T: Constraint>(&mut self, constraint: &mut T) {
+      unsafe {
+        clutter_actor_add_constraint(self.as_actor(), constraint.as_constraint());
+      }
+    }
+
+    fn on_allocation_changed(&mut self, handler: &|&mut ActorRef, &Box, allocation::Flags|) -> u64 {
+      unsafe {
+        return rsi_connect_on_allocation_changed(self.as_actor(), "allocation_changed".to_c_str().unwrap(), handler_for_on_allocation_changed, std::cast::transmute::<&|&mut ActorRef, &Box, allocation::Flags|, *mut std::libc::c_void>(handler), std::ptr::null(), 0);
+      }
+    }
+
+    fn on_destroy(&mut self, handler: &|&mut ActorRef|) -> u64 {
+      unsafe {
+        return rsi_connect_on_destroy(self.as_actor(), "destroy".to_c_str().unwrap(), handler_for_on_destroy, std::cast::transmute::<&|&mut ActorRef|, *mut std::libc::c_void>(handler), std::ptr::null(), 0);
+      }
+    }
   }
 
   impl Actor for ActorRef {
@@ -778,12 +853,34 @@ pub mod actor {
     }
   }
 
+  extern "C" fn handler_for_on_allocation_changed(actor: *mut std::libc::c_void, allocation_box: *Box, flags: allocation::Flags, handler: *mut std::libc::c_void) {
+    unsafe {
+      let mut actor_r = ActorRef { opaque: actor };
+      let handler = std::cast::transmute::<*mut std::libc::c_void, &|actor: &mut ActorRef, allocation_box: &Box, flags: allocation::Flags|>(handler);
+      (*handler)(&mut actor_r, std::cast::transmute(allocation_box), flags);
+      std::cast::forget(actor_r);
+    }
+  }
+
+  extern "C" fn handler_for_on_destroy(actor: *mut std::libc::c_void, handler: *mut std::libc::c_void) {
+    unsafe {
+      let mut actor_r = ActorRef { opaque: actor };
+      let handler = std::cast::transmute::<*mut std::libc::c_void, &|actor: &mut ActorRef|>(handler);
+      (*handler)(&mut actor_r);
+      std::cast::forget(actor_r);
+    }
+  }
+
   extern {
     fn clutter_actor_new() -> ActorRef;
+    #[link_name = "g_signal_connect_data"]
+    fn rsi_connect_on_allocation_changed(instance: *mut std::libc::c_void, detailed_signal: *std::libc::c_char, c_handler: extern "C" fn(*mut std::libc::c_void, *Box, allocation::Flags, *mut std::libc::c_void), data: *mut std::libc::c_void, destroy_data: *std::libc::c_void, connect_flags: i32) -> u64;
+    #[link_name = "g_signal_connect_data"]
+    fn rsi_connect_on_destroy(instance: *mut std::libc::c_void, detailed_signal: *std::libc::c_char, c_handler: extern "C" fn(*mut std::libc::c_void, *mut std::libc::c_void), data: *mut std::libc::c_void, destroy_data: *std::libc::c_void, connect_flags: i32) -> u64;
     fn clutter_actor_set_flags(self_value: *mut std::libc::c_void, flags: Flags);
     fn clutter_actor_unset_flags(self_value: *mut std::libc::c_void, flags: Flags);
     fn clutter_actor_get_flags(self_value: *mut std::libc::c_void) -> Flags;
-    fn clutter_actor_set_name(self_value: *mut std::libc::c_void, name: std::c_str::CString);
+    fn clutter_actor_set_name(self_value: *mut std::libc::c_void, name: *std::libc::c_char);
     fn clutter_actor_get_name(self_value: *mut std::libc::c_void) -> *i8;
     fn clutter_actor_get_gid(self_value: *mut std::libc::c_void) -> i32;
     fn clutter_actor_show(self_value: *mut std::libc::c_void);
@@ -846,6 +943,10 @@ pub mod actor {
     fn clutter_actor_get_transformed_size(self_value: *mut std::libc::c_void, width: *mut f32, height: *mut f32);
     fn clutter_actor_get_paint_opacity(self_value: *mut std::libc::c_void) -> i8;
     fn clutter_actor_get_paint_visibility(self_value: *mut std::libc::c_void) -> i32;
+    fn clutter_actor_set_content(self_value: *mut std::libc::c_void, content: *mut std::libc::c_void);
+    fn clutter_actor_get_content(self_value: *mut std::libc::c_void) -> super::content::ContentRef;
+    fn clutter_actor_set_content_scaling_filters(self_value: *mut std::libc::c_void, min: super::scaling::Filter, mag: super::scaling::Filter);
+    fn clutter_actor_get_content_scaling_filters(self_value: *mut std::libc::c_void, min: *mut super::scaling::Filter, mag: *mut super::scaling::Filter);
     fn clutter_actor_set_clip(self_value: *mut std::libc::c_void, xoff: f32, yoff: f32, width: f32, height: f32);
     fn clutter_actor_remove_clip(self_value: *mut std::libc::c_void);
     fn clutter_actor_has_clip(self_value: *mut std::libc::c_void) -> i32;
@@ -881,12 +982,92 @@ pub mod actor {
     fn clutter_actor_get_easing_duration(self_value: *mut std::libc::c_void) -> i32;
     fn clutter_actor_set_easing_delay(self_value: *mut std::libc::c_void, msecs: i32);
     fn clutter_actor_get_easing_delay(self_value: *mut std::libc::c_void) -> i32;
-    fn clutter_actor_set_reactive(self_value: *mut std::libc::c_void, msecs: i32);
+    fn clutter_actor_set_reactive(self_value: *mut std::libc::c_void, reactive: i32);
     fn clutter_actor_get_reactive(self_value: *mut std::libc::c_void) -> i32;
     fn clutter_actor_has_key_focus(self_value: *mut std::libc::c_void) -> i32;
     fn clutter_actor_grap_key_focus(self_value: *mut std::libc::c_void);
     fn clutter_actor_has_pointer(self_value: *mut std::libc::c_void) -> i32;
     fn clutter_actor_has_actions(self_value: *mut std::libc::c_void) -> i32;
+    fn clutter_actor_add_constraint(self_value: *mut std::libc::c_void, constraint: *mut std::libc::c_void);
+  }
+
+  pub struct ActorMetaRef {
+    opaque: *mut std::libc::c_void
+  }
+
+  pub trait ActorMeta {
+    fn as_actor_meta(&self) -> *mut std::libc::c_void;
+
+    fn set_name(&mut self, name: &str) {
+      unsafe {
+        use std::c_str::ToCStr;
+        clutter_actor_meta_set_name(self.as_actor_meta(), name.to_c_str().unwrap());
+      }
+    }
+
+    fn get_name(&mut self) -> std::c_str::CString {
+      unsafe {
+        let foreign_result = clutter_actor_meta_get_name(self.as_actor_meta());
+        return std::c_str::CString::new(foreign_result, false);
+      }
+    }
+
+    fn set_enabled(&mut self, enabled: bool) {
+      unsafe {
+        clutter_actor_meta_set_enabled(self.as_actor_meta(), (enabled as i32));
+      }
+    }
+
+    fn get_enabled(&mut self) -> bool {
+      unsafe {
+        let foreign_result = clutter_actor_meta_get_enabled(self.as_actor_meta());
+        return foreign_result != 0;
+      }
+    }
+
+    fn get_actor(&mut self) -> ActorRef {
+      unsafe {
+        let foreign_result = clutter_actor_meta_get_actor(self.as_actor_meta());
+        return foreign_result;
+      }
+    }
+  }
+
+  impl ActorMeta for ActorMetaRef {
+    fn as_actor_meta(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  extern {
+    fn clutter_actor_meta_set_name(self_value: *mut std::libc::c_void, name: *std::libc::c_char);
+    fn clutter_actor_meta_get_name(self_value: *mut std::libc::c_void) -> *i8;
+    fn clutter_actor_meta_set_enabled(self_value: *mut std::libc::c_void, enabled: i32);
+    fn clutter_actor_meta_get_enabled(self_value: *mut std::libc::c_void) -> i32;
+    fn clutter_actor_meta_get_actor(self_value: *mut std::libc::c_void) -> ActorRef;
+  }
+
+  impl std::ops::Drop for ActorRef {
+    fn drop(&mut self) {
+      unsafe {
+        clutter_actor_destroy(self.opaque);
+      }
+    }
+  }
+
+  extern {
+    fn clutter_actor_destroy(self_value: *mut std::libc::c_void);
+  }
+
+  pub mod allocation {
+    use std;
+
+    #[repr(i32)]
+    pub enum Flags {
+      None = 0,
+      AbsoluteOriginChanged = 2,
+      DelegateLayout = 4
+    }
   }
 }
 
@@ -928,7 +1109,7 @@ pub mod stage {
       }
     }
 
-    fn set_key_focus<T: Actor>(&mut self, actor: T) {
+    fn set_key_focus<T: Actor>(&mut self, actor: &mut T) {
       unsafe {
         clutter_stage_set_key_focus(self.as_stage(), actor.as_actor());
       }
@@ -1011,7 +1192,7 @@ pub mod stage {
     fn set_title(&mut self, title: &str) {
       unsafe {
         use std::c_str::ToCStr;
-        clutter_stage_set_title(self.as_stage(), title.to_c_str());
+        clutter_stage_set_title(self.as_stage(), title.to_c_str().unwrap());
       }
     }
 
@@ -1084,6 +1265,30 @@ pub mod stage {
         clutter_stage_skip_sync_delay(self.as_stage());
       }
     }
+
+    fn on_activate(&mut self, handler: &|&mut StageRef|) -> u64 {
+      unsafe {
+        return rsi_connect_on_activate(self.as_stage(), "activate".to_c_str().unwrap(), handler_for_on_activate, std::cast::transmute::<&|&mut StageRef|, *mut std::libc::c_void>(handler), std::ptr::null(), 0);
+      }
+    }
+
+    fn on_deactivate(&mut self, handler: &|&mut StageRef|) -> u64 {
+      unsafe {
+        return rsi_connect_on_deactivate(self.as_stage(), "deactivate".to_c_str().unwrap(), handler_for_on_deactivate, std::cast::transmute::<&|&mut StageRef|, *mut std::libc::c_void>(handler), std::ptr::null(), 0);
+      }
+    }
+
+    fn on_fullscreen(&mut self, handler: &|&mut StageRef|) -> u64 {
+      unsafe {
+        return rsi_connect_on_fullscreen(self.as_stage(), "fullscreen".to_c_str().unwrap(), handler_for_on_fullscreen, std::cast::transmute::<&|&mut StageRef|, *mut std::libc::c_void>(handler), std::ptr::null(), 0);
+      }
+    }
+
+    fn on_unfullscreen(&mut self, handler: &|&mut StageRef|) -> u64 {
+      unsafe {
+        return rsi_connect_on_unfullscreen(self.as_stage(), "unfullscreen".to_c_str().unwrap(), handler_for_on_unfullscreen, std::cast::transmute::<&|&mut StageRef|, *mut std::libc::c_void>(handler), std::ptr::null(), 0);
+      }
+    }
   }
 
   impl Stage for StageRef {
@@ -1098,8 +1303,52 @@ pub mod stage {
     }
   }
 
+  extern "C" fn handler_for_on_activate(stage: *mut std::libc::c_void, handler: *mut std::libc::c_void) {
+    unsafe {
+      let mut stage_r = StageRef { opaque: stage };
+      let handler = std::cast::transmute::<*mut std::libc::c_void, &|stage: &mut StageRef|>(handler);
+      (*handler)(&mut stage_r);
+      std::cast::forget(stage_r);
+    }
+  }
+
+  extern "C" fn handler_for_on_deactivate(stage: *mut std::libc::c_void, handler: *mut std::libc::c_void) {
+    unsafe {
+      let mut stage_r = StageRef { opaque: stage };
+      let handler = std::cast::transmute::<*mut std::libc::c_void, &|stage: &mut StageRef|>(handler);
+      (*handler)(&mut stage_r);
+      std::cast::forget(stage_r);
+    }
+  }
+
+  extern "C" fn handler_for_on_fullscreen(stage: *mut std::libc::c_void, handler: *mut std::libc::c_void) {
+    unsafe {
+      let mut stage_r = StageRef { opaque: stage };
+      let handler = std::cast::transmute::<*mut std::libc::c_void, &|stage: &mut StageRef|>(handler);
+      (*handler)(&mut stage_r);
+      std::cast::forget(stage_r);
+    }
+  }
+
+  extern "C" fn handler_for_on_unfullscreen(stage: *mut std::libc::c_void, handler: *mut std::libc::c_void) {
+    unsafe {
+      let mut stage_r = StageRef { opaque: stage };
+      let handler = std::cast::transmute::<*mut std::libc::c_void, &|stage: &mut StageRef|>(handler);
+      (*handler)(&mut stage_r);
+      std::cast::forget(stage_r);
+    }
+  }
+
   extern {
     fn clutter_stage_new() -> StageRef;
+    #[link_name = "g_signal_connect_data"]
+    fn rsi_connect_on_activate(instance: *mut std::libc::c_void, detailed_signal: *std::libc::c_char, c_handler: extern "C" fn(*mut std::libc::c_void, *mut std::libc::c_void), data: *mut std::libc::c_void, destroy_data: *std::libc::c_void, connect_flags: i32) -> u64;
+    #[link_name = "g_signal_connect_data"]
+    fn rsi_connect_on_deactivate(instance: *mut std::libc::c_void, detailed_signal: *std::libc::c_char, c_handler: extern "C" fn(*mut std::libc::c_void, *mut std::libc::c_void), data: *mut std::libc::c_void, destroy_data: *std::libc::c_void, connect_flags: i32) -> u64;
+    #[link_name = "g_signal_connect_data"]
+    fn rsi_connect_on_fullscreen(instance: *mut std::libc::c_void, detailed_signal: *std::libc::c_char, c_handler: extern "C" fn(*mut std::libc::c_void, *mut std::libc::c_void), data: *mut std::libc::c_void, destroy_data: *std::libc::c_void, connect_flags: i32) -> u64;
+    #[link_name = "g_signal_connect_data"]
+    fn rsi_connect_on_unfullscreen(instance: *mut std::libc::c_void, detailed_signal: *std::libc::c_char, c_handler: extern "C" fn(*mut std::libc::c_void, *mut std::libc::c_void), data: *mut std::libc::c_void, destroy_data: *std::libc::c_void, connect_flags: i32) -> u64;
     fn clutter_stage_ensure_current(self_value: *mut std::libc::c_void);
     fn clutter_stage_ensure_viewport(self_value: *mut std::libc::c_void);
     fn clutter_stage_ensure_redraw(self_value: *mut std::libc::c_void);
@@ -1115,7 +1364,7 @@ pub mod stage {
     fn clutter_stage_get_no_clear_hint(self_value: *mut std::libc::c_void) -> i32;
     fn clutter_stage_set_motion_events_enabled(self_value: *mut std::libc::c_void, enabled: i32);
     fn clutter_stage_get_motion_events_enabled(self_value: *mut std::libc::c_void) -> i32;
-    fn clutter_stage_set_title(self_value: *mut std::libc::c_void, title: std::c_str::CString);
+    fn clutter_stage_set_title(self_value: *mut std::libc::c_void, title: *std::libc::c_char);
     fn clutter_stage_get_title(self_value: *mut std::libc::c_void) -> *i8;
     fn clutter_stage_set_user_resizable(self_value: *mut std::libc::c_void, resizable: i32);
     fn clutter_stage_get_user_resizable(self_value: *mut std::libc::c_void) -> i32;
@@ -1130,7 +1379,191 @@ pub mod stage {
   }
 }
 
+pub mod constraint {
+  use std;
+  use super::actor::Actor;
+  use super::actor::ActorMeta;
+
+  pub struct ConstraintRef {
+    opaque: *mut std::libc::c_void
+  }
+
+  pub trait Constraint {
+    fn as_constraint(&self) -> *mut std::libc::c_void;
+
+  }
+
+  impl Constraint for ConstraintRef {
+    fn as_constraint(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  impl ActorMeta for ConstraintRef {
+    fn as_actor_meta(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  extern {
+  }
+
+  pub struct BindConstraintRef {
+    opaque: *mut std::libc::c_void
+  }
+
+  impl BindConstraintRef {
+    pub fn new<T: Actor>(source: &mut T, coordinate: bind::Coordinate, offset: f32) -> BindConstraintRef {
+      unsafe {
+        let foreign_result = clutter_bind_constraint_new(source.as_actor(), coordinate, offset);
+        return foreign_result;
+      }
+    }
+  }
+
+  pub trait BindConstraint {
+    fn as_bind_constraint(&self) -> *mut std::libc::c_void;
+
+  }
+
+  impl BindConstraint for BindConstraintRef {
+    fn as_bind_constraint(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  impl Constraint for BindConstraintRef {
+    fn as_constraint(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  extern {
+    fn clutter_bind_constraint_new(source: *mut std::libc::c_void, coordinate: bind::Coordinate, offset: f32) -> BindConstraintRef;
+  }
+
+  pub mod bind {
+    use std;
+
+    #[repr(i32)]
+    pub enum Coordinate {
+      X = 0,
+      Y = 1,
+      Width = 2,
+      Height = 3,
+      Position = 4,
+      Size = 5,
+      All = 6
+    }
+  }
+}
+
+pub mod content {
+  use std;
+
+  pub struct ContentRef {
+    opaque: *mut std::libc::c_void
+  }
+
+  pub trait Content {
+    fn as_content(&self) -> *mut std::libc::c_void;
+
+    fn get_preferred_size(&mut self) -> (bool, f32, f32) {
+      unsafe {
+        let mut width:f32 = std::unstable::intrinsics::init();
+        let mut height:f32 = std::unstable::intrinsics::init();
+        let foreign_result = clutter_content_get_preferred_size(self.as_content(), &mut width, &mut height);
+        return (foreign_result != 0, width, height);
+      }
+    }
+
+    fn invalidate(&mut self) {
+      unsafe {
+        clutter_content_invalidate(self.as_content());
+      }
+    }
+  }
+
+  impl Content for ContentRef {
+    fn as_content(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  extern {
+    fn clutter_content_get_preferred_size(self_value: *mut std::libc::c_void, width: *mut f32, height: *mut f32) -> i32;
+    fn clutter_content_invalidate(self_value: *mut std::libc::c_void);
+  }
+}
+
+pub mod canvas {
+  use std;
+  use cairo;
+  use super::content::Content;
+
+  pub struct CanvasRef {
+    opaque: *mut std::libc::c_void
+  }
+
+  impl CanvasRef {
+    pub fn new() -> CanvasRef {
+      unsafe {
+        let foreign_result = clutter_canvas_new();
+        return foreign_result;
+      }
+    }
+  }
+
+  pub trait Canvas {
+    fn as_canvas(&self) -> *mut std::libc::c_void;
+
+    fn set_size(&mut self, width: i32, height: i32) {
+      unsafe {
+        clutter_canvas_set_size(self.as_canvas(), width, height);
+      }
+    }
+
+    fn on_draw(&mut self, handler: &|&mut CanvasRef, &mut cairo::Cairo, i32, i32| -> bool) -> u64 {
+      unsafe {
+        return rsi_connect_on_draw(self.as_canvas(), "draw".to_c_str().unwrap(), handler_for_on_draw, std::cast::transmute::<&|&mut CanvasRef, &mut cairo::Cairo, i32, i32| -> bool, *mut std::libc::c_void>(handler), std::ptr::null(), 0);
+      }
+    }
+  }
+
+  impl Canvas for CanvasRef {
+    fn as_canvas(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  impl Content for CanvasRef {
+    fn as_content(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  extern "C" fn handler_for_on_draw(canvas: *mut std::libc::c_void, cairo: *mut std::libc::c_void, width: i32, height: i32, handler: *mut std::libc::c_void) -> i32 {
+    unsafe {
+      let mut canvas_r = CanvasRef { opaque: canvas };
+      let mut cairo_r = cairo::Cairo { opaque: cairo };
+      let handler = std::cast::transmute::<*mut std::libc::c_void, &|canvas: &mut CanvasRef, cairo: &mut cairo::Cairo, width: i32, height: i32| -> bool>(handler);
+      let foreign_result = (*handler)(&mut canvas_r, &mut cairo_r, width, height);
+      std::cast::forget(canvas_r);
+      std::cast::forget(cairo_r);
+      return (foreign_result as i32);
+    }
+  }
+
+  extern {
+    fn clutter_canvas_new() -> CanvasRef;
+    #[link_name = "g_signal_connect_data"]
+    fn rsi_connect_on_draw(instance: *mut std::libc::c_void, detailed_signal: *std::libc::c_char, c_handler: extern "C" fn(*mut std::libc::c_void, *mut std::libc::c_void, i32, i32, *mut std::libc::c_void) -> i32, data: *mut std::libc::c_void, destroy_data: *std::libc::c_void, connect_flags: i32) -> u64;
+    fn clutter_canvas_set_size(self_value: *mut std::libc::c_void, width: i32, height: i32);
+  }
+}
+
 extern {
   fn clutter_init(argc: *mut i32, argv: *mut i32);
   fn clutter_main();
+  fn clutter_main_quit();
 }

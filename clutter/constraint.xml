@@ -1,0 +1,37 @@
+<module name='constraint'>
+  <use name='super::actor::Actor'/>
+  <use name='super::actor::ActorMeta'/>
+
+  <module name='bind'>
+    <enum name='Coordinate'>
+      <value name='X'/>
+      <value name='Y'/>
+      <value name='Width'/>
+      <value name='Height'/>
+      <value name='Position'/>
+      <value name='Size'/>
+      <value name='All'/>
+    </enum>
+  </module>
+  
+  <gobject name='Constraint'>
+    <interface name='ActorMeta'/>
+  </gobject>
+  
+  <gobject name='BindConstraint' prefix='clutter_bind_constraint_'>
+    <interface name='Constraint'/>
+
+    <constructor name='new'>
+      <argument name='source' type='T' implements='Actor'/>
+      <argument name='coordinate' type='[bind::Coordinate]'/>
+      <argument name='offset' type='float'/>
+    </constructor>
+
+    <!-- TODO: clutter_bind_constraint_set_source -->
+    <!-- TODO: clutter_bind_constraint_get_source -->
+    <!-- TODO: clutter_bind_constraint_set_coordinate -->
+    <!-- TODO: clutter_bind_constraint_get_coordinate -->
+    <!-- TODO: clutter_bind_constraint_set_offset -->
+    <!-- TODO: clutter_bind_constraint_get_offset -->
+  </gobject>
+</module>

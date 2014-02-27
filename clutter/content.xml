@@ -1,0 +1,13 @@
+<module name='content'>  
+  <gobject name='Content' prefix='clutter_content_'>
+    <fn name='get_preferred_size'>
+      <argument name='width' type='float' transformer='zero'/>
+      <argument name='height' type='float' transformer='zero'/>
+      <result type='i32' transformer='compare' value='0'/>
+      <result name='width' type='float' transformer='out'/>
+      <result name='height' type='float' transformer='out'/>
+    </fn>
+    
+    <fn name='invalidate'/>
+  </gobject>
+</module>

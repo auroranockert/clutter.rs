@@ -1,5 +1,7 @@
 <module name='actor'>
   <use name='cairo'/>
+  <use name='super::content::Content'/>
+  <use name='super::constraint::Constraint'/>
 
   <enum name='Flags'>
     <value name='Mapped' value='2'/>
@@ -8,6 +10,21 @@
     <value name='Visible' value='16'/>
     <value name='NoLayout' value='32'/>
   </enum>
+
+  <module name='allocation'>
+    <enum name='Flags'>
+      <value name='None' value='0'/>
+      <value name='AbsoluteOriginChanged' value='2'/>
+      <value name='DelegateLayout' value='4'/>
+    </enum>
+  </module>
+
+  <struct name='Box'>
+    <field name='x1' type='float'/>
+    <field name='y1' type='float'/>
+    <field name='x2' type='float'/>
+    <field name='y2' type='float'/>
+  </struct>
 
   <!-- TODO: ClutterMargin -->
   <!-- TODO: clutter_actor_iter -->
@@ -358,12 +375,29 @@
     <!-- TODO: clutter_actor_get_transformed_paint_volume -->
     <!-- TODO: clutter_actor_get_default_paint_volume -->
 
-    <!-- TODO: clutter_actor_set_content -->
-    <!-- TODO: clutter_actor_get_content -->
+    <fn name='set_content'>
+      <argument name='content' type='T' implements='Content'/>
+    </fn>
+
+    <fn name='get_content'>
+      <result type='{super::content::ContentRef}'/>
+    </fn>
+
     <!-- TODO: clutter_actor_set_content_gravity -->
     <!-- TODO: clutter_actor_get_content_gravity -->
-    <!-- TODO: clutter_actor_set_content_scaling_filters -->
-    <!-- TODO: clutter_actor_get_content_scaling_filters -->
+
+    <fn name='set_content_scaling_filters'>
+      <argument name='min' type='[super::scaling::Filter]'/>
+      <argument name='mag' type='[super::scaling::Filter]'/>
+    </fn>
+
+    <fn name='get_content_scaling_filters'>
+      <argument name='min' type='[super::scaling::Filter]' transformer='zero'/>
+      <argument name='mag' type='[super::scaling::Filter]' transformer='zero'/>
+      <result name='min' type='[super::scaling::Filter]' transformer='out'/>
+      <result name='mag' type='[super::scaling::Filter]' transformer='out'/>
+    </fn>
+
     <!-- TODO: clutter_actor_set_content_repeat -->
     <!-- TODO: clutter_actor_get_content_repeat -->
     <!-- TODO: clutter_actor_get_content_box -->
@@ -528,7 +562,7 @@
     <!-- TODO: clutter_actor_remove_all_transitions -->
 
     <fn name='set_reactive'>
-      <argument name='msecs' type='bool' as='i32'/>
+      <argument name='reactive' type='bool' as='i32'/>
     </fn>
 
     <fn name='get_reactive'>
@@ -563,6 +597,11 @@
     <!-- TODO: clutter_actor_get_actions -->
     <!-- TODO: clutter_actor_get_action -->
     <!-- TODO: clutter_actor_clear_actions -->
+
+    <fn name='add_constraint'>
+      <argument name='constraint' type='T' implements='Constraint'/>
+    </fn>
+
     <!-- TODO: clutter_actor_add_constraint -->
     <!-- TODO: clutter_actor_add_constraint_with_name -->
     <!-- TODO: clutter_actor_remove_constraint -->
@@ -579,13 +618,70 @@
     <!-- TODO: clutter_actor_get_effects -->
     <!-- TODO: clutter_actor_get_effect -->
     <!-- TODO: clutter_actor_clear_effects -->
+
+    <signal name='allocation-changed'>
+      <argument name='actor' type='{ActorRef}' pass_by='mut-ref' transformer='gobject'/>
+      <argument name='allocation_box' type='{Box}' pass_by='ref'/>
+      <argument name='flags' type='[allocation::Flags]'/>
+    </signal>
+
+    <!-- TODO: allocation-changed -->
+    <!-- TODO: button-press-event -->
+    <!-- TODO: button-release-event -->
+    <!-- TODO: captured-event -->
+
+    <signal name='destroy'>
+      <argument name='actor' type='{ActorRef}' pass_by='mut-ref' transformer='gobject'/>
+    </signal>
+
+    <!-- TODO: enter-event -->
+    <!-- TODO: event -->
+    <!-- TODO: hide -->
+    <!-- TODO: key-focus-in -->
+    <!-- TODO: key-focus-out -->
+    <!-- TODO: key-press-event -->
+    <!-- TODO: key-release-event -->
+    <!-- TODO: leave-event -->
+    <!-- TODO: motion-event -->
+    <!-- TODO: paint -->
+    <!-- TODO: parent-set -->
+    <!-- TODO: pick -->
+    <!-- TODO: queue-redraw -->
+    <!-- TODO: queue-relayout -->
+    <!-- TODO: realize -->
+    <!-- TODO: scroll-event -->
+    <!-- TODO: show -->
+    <!-- TODO: touch-event -->
+    <!-- TODO: transition-stopped -->
+    <!-- TODO: transitions-completed -->
+    <!-- TODO: unrealize -->
   </gobject>
 
-  <!-- TODO: Fix linking issue
   <implementation trait='std::ops::Drop' for='ActorRef'>
     <fn name='drop' foreign='clutter_actor_destroy'>
       <argument pass_by='mut-self' transformer='opaque'/>
     </fn>
   </implementation>
-  -->
+
+  <gobject name='ActorMeta' prefix='clutter_actor_meta_'>
+    <fn name='set_name'>
+      <argument name='name' type='string' pass_by='ref' transformer='cstring'/>
+    </fn>
+
+    <fn name='get_name'>
+      <result type='{std::c_str::CString}' transformer='cstring'/>
+    </fn>
+
+    <fn name='set_enabled'>
+      <argument name='enabled' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_enabled'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <fn name='get_actor'>
+      <result type='{ActorRef}'/>
+    </fn>
+  </gobject>
 </module>
