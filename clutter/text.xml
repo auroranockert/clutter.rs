@@ -1,0 +1,220 @@
+<module name='text'>
+  <use name='super::actor::Actor'/>
+  <use name='super::content::Content'/>
+
+  <gobject name='Text' prefix='clutter_text_'>
+    <interface name='Actor'/>
+    <interface name='Content'/>
+    <!-- TODO: Containter -->
+    <!-- TODO: Scriptable -->
+    <!-- TODO: Animatable -->
+    <!-- TODO: AtkImplementorIface (ATK) -->
+
+    <constructor name='new'/>
+
+    <constructor name='new_full'>
+      <argument name='font_name' type='string' pass_by='ref' transformer='cstring'/>
+      <argument name='text' type='string' pass_by='ref' transformer='cstring'/>
+      <argument name='color' type='{super::color::Color}'/>
+    </constructor>
+
+    <constructor name='new_with_text'>
+      <argument name='font_name' type='string' pass_by='ref' transformer='cstring'/>
+      <argument name='text' type='string' pass_by='ref' transformer='cstring'/>
+    </constructor>
+
+    <constructor name='new_with_buffer'>
+      <argument name='buffer' type='T' implements='Buffer' pass_by='ref'/>
+    </constructor>
+
+    <!-- TODO: clutter_text_set_buffer -->
+    <!-- TODO: clutter_text_get_buffer -->
+    <!-- TODO: clutter_text_set_text -->
+    <!-- TODO: clutter_text_set_markup -->
+    <!-- TODO: clutter_text_get_text -->
+    <!-- TODO: clutter_text_set_activatable -->
+    <!-- TODO: clutter_text_get_activatable -->
+    <!-- TODO: clutter_text_set_attributes -->
+    <!-- TODO: clutter_text_get_attributes -->
+
+    <fn name='set_color'>
+      <argument name='color' type='{super::color::Color}' pass_by='ref' transformer='opaque'/>
+    </fn>
+
+    <fn name='get_color'>
+      <result type='{super::color::Color}'/>
+    </fn>
+
+    <!-- TODO: clutter_text_set_ellipsize -->
+    <!-- TODO: clutter_text_get_ellipsize -->
+
+    <fn name='set_font_name'>
+      <argument name='text' type='string' pass_by='ref' transformer='cstring'/>
+    </fn>
+
+    <fn name='get_font_name'>
+      <result type='{std::c_str::CString}' transformer='cstring'/>
+    </fn>
+
+    <!-- TODO: clutter_text_set_font_description -->
+    <!-- TODO: clutter_text_get_font_description -->
+    <!-- TODO: clutter_text_set_password_char -->
+    <!-- TODO: clutter_text_get_password_char -->
+    <!-- TODO: clutter_text_set_justify -->
+    <!-- TODO: clutter_text_get_justify -->
+    <!-- TODO: clutter_text_get_layout -->
+    <!-- TODO: clutter_text_set_line_alignment -->
+    <!-- TODO: clutter_text_get_line_alignment -->
+
+    <fn name='set_line_wrap'>
+      <argument name='fixed_position_set' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_line_wrap'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_text_set_line_wrap_mode -->
+    <!-- TODO: clutter_text_get_line_wrap_mode -->
+    <!-- TODO: clutter_text_set_max_length -->
+    <!-- TODO: clutter_text_get_max_length -->
+    
+    <fn name='set_selectable'>
+      <argument name='fixed_position_set' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_selectable'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+    
+    <!-- TODO: clutter_text_set_selection -->
+    <!-- TODO: clutter_text_get_selection -->
+    <!-- TODO: clutter_text_set_selection_bound -->
+    <!-- TODO: clutter_text_get_selection_bound -->
+    <!-- TODO: clutter_text_set_single_line_mode -->
+    <!-- TODO: clutter_text_get_single_line_mode -->
+    <!-- TODO: clutter_text_set_use_markup -->
+    <!-- TODO: clutter_text_get_use_markup -->
+    <!-- TODO: clutter_text_get_selectable -->
+
+    <fn name='set_editable'>
+      <argument name='fixed_position_set' type='bool' as='i32'/>
+    </fn>
+
+    <fn name='get_editable'>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+
+    <!-- TODO: clutter_text_insert_text -->
+    <!-- TODO: clutter_text_insert_unichar -->
+    <!-- TODO: clutter_text_delete_chars -->
+    <!-- TODO: clutter_text_delete_text -->
+    <!-- TODO: clutter_text_delete_selection -->
+    <!-- TODO: clutter_text_get_chars -->
+
+    <fn name='set_cursor_color'>
+      <argument name='color' type='{super::color::Color}' pass_by='ref' transformer='opaque'/>
+    </fn>
+
+    <fn name='get_cursor_color'>
+      <result type='{super::color::Color}'/>
+    </fn>
+
+    <fn name='set_selection_color'>
+      <argument name='color' type='{super::color::Color}' pass_by='ref' transformer='opaque'/>
+    </fn>
+
+    <fn name='get_selection_color'>
+      <result type='{super::color::Color}'/>
+    </fn>
+
+    <fn name='set_selected_text_color'>
+      <argument name='color' type='{super::color::Color}' pass_by='ref' transformer='opaque'/>
+    </fn>
+
+    <fn name='get_selected_text_color'>
+      <result type='{super::color::Color}'/>
+    </fn>
+
+    <!-- TODO: clutter_text_set_cursor_position -->
+    <!-- TODO: clutter_text_get_cursor_position -->
+    <!-- TODO: clutter_text_set_cursor_visible -->
+    <!-- TODO: clutter_text_get_cursor_visible -->
+    <!-- TODO: clutter_text_set_cursor_size -->
+    <!-- TODO: clutter_text_get_cursor_size -->
+    <!-- TODO: clutter_text_get_cursor_rect -->
+    <!-- TODO: clutter_text_activate -->
+    <!-- TODO: clutter_text_coords_to_position -->
+    <!-- TODO: clutter_text_position_to_coords -->
+    <!-- TODO: clutter_text_set_preedit_string -->
+    <!-- TODO: clutter_text_get_layout_offsets -->
+
+    <!-- TODO: activate -->
+    <!-- TODO: cursor-changed -->
+    <!-- TODO: cursor-event -->
+    <!-- TODO: delete-text -->
+    <!-- TODO: insert-text -->
+    <!-- TODO: text-changed -->
+  </gobject>
+
+  <gobject name='Buffer' prefix='clutter_text_buffer_'>
+    <constructor name='new'/>
+
+    <constructor name='new_with_text'>
+      <argument name='text' type='string' pass_by='ref' transformer='cstring'/>
+      <argument name='utf8_len' type='int' value='-1'/>
+    </constructor>
+
+
+    <fn name='set_text'>
+      <argument name='text' type='string' pass_by='ref' transformer='cstring'/>
+      <argument name='utf8_len' type='int' value='-1'/>
+    </fn>
+
+    <fn name='get_text'>
+      <result type='{std::c_str::CString}' transformer='cstring'/>
+    </fn>
+
+    <fn name='get_bytes'>
+      <result type='size_t'/>
+    </fn>
+
+    <fn name='get_length'>
+      <result type='unsigned int'/>
+    </fn>
+
+    <fn name='set_max_length'>
+      <argument name='max_length' type='int'/>
+    </fn>
+
+    <fn name='get_max_length'>
+      <result type='int'/>
+    </fn>
+
+    <fn name='insert_text'>
+      <argument name='position' type='unsigned int'/>
+      <argument name='chars' type='string' pass_by='ref' transformer='cstring'/>
+      <argument name='n_chars' type='int' value='-1'/>
+      <result type='unsigned int'/>
+    </fn>
+
+    <fn name='delete_text'>
+      <argument name='position' type='unsigned int'/>
+      <argument name='n_chars' type='int'/>
+      <result type='unsigned int'/>
+    </fn>
+
+    <fn name='emit_inserted_text'>
+      <argument name='position' type='unsigned int'/>
+      <argument name='chars' type='string' pass_by='ref' transformer='cstring'/>
+      <argument name='n_chars' type='int' value='-1'/>
+      <result type='unsigned int'/>
+    </fn>
+
+    <fn name='emit_deleted_text'>
+      <argument name='position' type='unsigned int'/>
+      <argument name='n_chars' type='int'/>
+      <result type='unsigned int'/>
+    </fn>
+  </gobject>
+</module>

@@ -1,0 +1,131 @@
+<module name='color'>
+  <struct name='Color' opaque='true'/>
+
+  <implementation for='Color' prefix='clutter_color_'>
+    <fn name='new'>
+      <argument name='red' type='u8'/>
+      <argument name='green' type='u8'/>
+      <argument name='blue' type='u8'/>
+      <argument name='alpha' type='u8'/>
+      <result type='{Color}'/>
+    </fn>
+    
+    <fn name='alloc'>
+      <result type='{Color}'/>
+    </fn>
+    
+    <!-- TODO: clutter_color_get_static -->
+    
+    <fn name='init'>
+      <argument pass_by='mut-self' transformer='opaque'/>
+      <argument name='red' type='u8'/>
+      <argument name='green' type='u8'/>
+      <argument name='blue' type='u8'/>
+      <argument name='alpha' type='u8'/>
+    </fn>
+    
+    <fn name='equal'>
+      <argument pass_by='self' transformer='opaque'/>
+      <argument name='other' type='{Color}' pass_by='ref' transformer='opaque'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+    
+    <fn name='hash'>
+      <argument pass_by='self' transformer='opaque'/>
+      <result type='u32'/>
+    </fn>
+    
+    <fn name='from_string'>
+      <argument pass_by='mut-self' transformer='opaque'/>
+      <argument name='name' type='string' pass_by='ref' transformer='cstring'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </fn>
+    
+    <fn name='to_string'>
+      <argument pass_by='self' transformer='opaque'/>
+      <result type='{std::c_str::CString}' transformer='cstring'/>
+    </fn>
+    
+    <fn name='from_hls'>
+      <argument pass_by='mut-self' transformer='opaque'/>
+      <argument name='hue' type='float'/>
+      <argument name='luminance' type='float'/>
+      <argument name='saturation' type='float'/>
+    </fn>
+    
+    <fn name='to_hls'>
+      <argument pass_by='self' transformer='opaque'/>
+      <argument name='hue' type='float' transformer='zero'/>
+      <argument name='luminance' type='float' transformer='zero'/>
+      <argument name='saturation' type='float' transformer='zero'/>
+      <result name='hue' type='float' transformer='out'/>
+      <result name='luminance' type='float' transformer='out'/>
+      <result name='saturation' type='float' transformer='out'/>
+    </fn>
+    
+    <fn name='from_pixel'>
+      <argument pass_by='mut-self' transformer='opaque'/>
+      <argument name='pixel' type='u32'/>
+    </fn>
+    
+    <fn name='to_pixel'>
+      <argument pass_by='self' transformer='opaque'/>
+      <result type='u32'/>
+    </fn>
+
+    <fn name='add'>
+      <argument pass_by='self' transformer='opaque'/>
+      <argument name='other' type='{Color}' pass_by='ref' transformer='opaque'/>
+      <result type='{Color}'/>
+    </fn>
+
+    <fn name='subtract'>
+      <argument pass_by='self' transformer='opaque'/>
+      <argument name='other' type='{Color}' pass_by='ref' transformer='opaque'/>
+      <result type='{Color}'/>
+    </fn>
+
+    <fn name='lighten'>
+      <argument pass_by='self' transformer='opaque'/>
+      <result type='{Color}'/>
+    </fn>
+
+    <fn name='darken'>
+      <argument pass_by='self' transformer='opaque'/>
+      <result type='{Color}'/>
+    </fn>
+
+    <fn name='shade'>
+      <argument pass_by='self' transformer='opaque'/>
+      <argument name='factor' type='double'/>
+      <result type='{Color}'/>
+    </fn>
+
+    <fn name='interpolate'>
+      <argument pass_by='self' transformer='opaque'/>
+      <argument name='final' type='{Color}' pass_by='ref' transformer='opaque'/>
+      <argument name='progress' type='double'/>
+      <result type='{Color}'/>
+    </fn>
+  </implementation>
+
+  <implementation trait='std::clone::Clone' for='Color'>
+    <fn name='clone' foreign='clutter_color_copy'>
+      <argument pass_by='self' transformer='opaque'/>
+      <result type='{Color}'/>
+    </fn>
+  </implementation>
+
+  <implementation trait='std::clone::DeepClone' for='Color'>
+    <fn name='deep_clone' foreign='clutter_color_copy' extern='false'>
+      <argument pass_by='self' transformer='opaque'/>
+      <result type='{Color}'/>
+    </fn>
+  </implementation>
+
+  <implementation trait='std::ops::Drop' for='Color'>
+    <fn name='drop' foreign='clutter_color_free'>
+      <argument pass_by='mut-self' transformer='opaque'/>
+    </fn>
+  </implementation>
+</module>

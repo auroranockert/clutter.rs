@@ -22,11 +22,16 @@
     </enum>
   </module>
 
+  <module file='clutter/color'/>
+
   <module file='clutter/actor'/>
   <module file='clutter/stage'/>
 
   <module file='clutter/constraint'/>
 
   <module file='clutter/content'/>
+
+  <module file='clutter/text'/>
+
   <module file='clutter/canvas'/>
 </crate>

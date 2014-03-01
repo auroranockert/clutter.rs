@@ -35,6 +35,193 @@ pub mod scaling {
   }
 }
 
+pub mod color {
+  use std;
+
+  pub struct Color {
+    opaque: *mut std::libc::c_void
+  }
+
+  impl Color {
+    pub fn new(red: i8, green: i8, blue: i8, alpha: i8) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_new(red, green, blue, alpha);
+        return foreign_result;
+      }
+    }
+
+    pub fn alloc() -> Color {
+      unsafe {
+        let foreign_result = clutter_color_alloc();
+        return foreign_result;
+      }
+    }
+
+    pub fn init(&mut self, red: i8, green: i8, blue: i8, alpha: i8) {
+      unsafe {
+        clutter_color_init(self.opaque, red, green, blue, alpha);
+      }
+    }
+
+    pub fn equal(&self, other: &Color) -> bool {
+      unsafe {
+        let foreign_result = clutter_color_equal(self.opaque as *std::libc::c_void, other.opaque as *std::libc::c_void);
+        return foreign_result != 0;
+      }
+    }
+
+    pub fn hash(&self) -> i32 {
+      unsafe {
+        let foreign_result = clutter_color_hash(self.opaque as *std::libc::c_void);
+        return foreign_result;
+      }
+    }
+
+    pub fn from_string(&mut self, name: &str) -> bool {
+      unsafe {
+        use std::c_str::ToCStr;
+        let foreign_result = clutter_color_from_string(self.opaque, name.to_c_str().unwrap());
+        return foreign_result != 0;
+      }
+    }
+
+    pub fn to_string(&self) -> std::c_str::CString {
+      unsafe {
+        let foreign_result = clutter_color_to_string(self.opaque as *std::libc::c_void);
+        return std::c_str::CString::new(foreign_result, false);
+      }
+    }
+
+    pub fn from_hls(&mut self, hue: f32, luminance: f32, saturation: f32) {
+      unsafe {
+        clutter_color_from_hls(self.opaque, hue, luminance, saturation);
+      }
+    }
+
+    pub fn to_hls(&self) -> (f32, f32, f32) {
+      unsafe {
+        let mut hue:f32 = std::unstable::intrinsics::init();
+        let mut luminance:f32 = std::unstable::intrinsics::init();
+        let mut saturation:f32 = std::unstable::intrinsics::init();
+        clutter_color_to_hls(self.opaque as *std::libc::c_void, &mut hue, &mut luminance, &mut saturation);
+        return (hue, luminance, saturation);
+      }
+    }
+
+    pub fn from_pixel(&mut self, pixel: i32) {
+      unsafe {
+        clutter_color_from_pixel(self.opaque, pixel);
+      }
+    }
+
+    pub fn to_pixel(&self) -> i32 {
+      unsafe {
+        let foreign_result = clutter_color_to_pixel(self.opaque as *std::libc::c_void);
+        return foreign_result;
+      }
+    }
+
+    pub fn add(&self, other: &Color) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_add(self.opaque as *std::libc::c_void, other.opaque as *std::libc::c_void);
+        return foreign_result;
+      }
+    }
+
+    pub fn subtract(&self, other: &Color) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_subtract(self.opaque as *std::libc::c_void, other.opaque as *std::libc::c_void);
+        return foreign_result;
+      }
+    }
+
+    pub fn lighten(&self) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_lighten(self.opaque as *std::libc::c_void);
+        return foreign_result;
+      }
+    }
+
+    pub fn darken(&self) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_darken(self.opaque as *std::libc::c_void);
+        return foreign_result;
+      }
+    }
+
+    pub fn shade(&self, factor: f64) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_shade(self.opaque as *std::libc::c_void, factor);
+        return foreign_result;
+      }
+    }
+
+    pub fn interpolate(&self, final: &Color, progress: f64) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_interpolate(self.opaque as *std::libc::c_void, final.opaque as *std::libc::c_void, progress);
+        return foreign_result;
+      }
+    }
+  }
+
+  extern {
+    fn clutter_color_new(red: i8, green: i8, blue: i8, alpha: i8) -> Color;
+    fn clutter_color_alloc() -> Color;
+    fn clutter_color_init(self_value: *mut std::libc::c_void, red: i8, green: i8, blue: i8, alpha: i8);
+    fn clutter_color_equal(self_value: *std::libc::c_void, other: *std::libc::c_void) -> i32;
+    fn clutter_color_hash(self_value: *std::libc::c_void) -> i32;
+    fn clutter_color_from_string(self_value: *mut std::libc::c_void, name: *std::libc::c_char) -> i32;
+    fn clutter_color_to_string(self_value: *std::libc::c_void) -> *i8;
+    fn clutter_color_from_hls(self_value: *mut std::libc::c_void, hue: f32, luminance: f32, saturation: f32);
+    fn clutter_color_to_hls(self_value: *std::libc::c_void, hue: *mut f32, luminance: *mut f32, saturation: *mut f32);
+    fn clutter_color_from_pixel(self_value: *mut std::libc::c_void, pixel: i32);
+    fn clutter_color_to_pixel(self_value: *std::libc::c_void) -> i32;
+    fn clutter_color_add(self_value: *std::libc::c_void, other: *std::libc::c_void) -> Color;
+    fn clutter_color_subtract(self_value: *std::libc::c_void, other: *std::libc::c_void) -> Color;
+    fn clutter_color_lighten(self_value: *std::libc::c_void) -> Color;
+    fn clutter_color_darken(self_value: *std::libc::c_void) -> Color;
+    fn clutter_color_shade(self_value: *std::libc::c_void, factor: f64) -> Color;
+    fn clutter_color_interpolate(self_value: *std::libc::c_void, final: *std::libc::c_void, progress: f64) -> Color;
+  }
+
+  impl std::clone::Clone for Color {
+    fn clone(&self) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_copy(self.opaque as *std::libc::c_void);
+        return foreign_result;
+      }
+    }
+  }
+
+  extern {
+    fn clutter_color_copy(self_value: *std::libc::c_void) -> Color;
+  }
+
+  impl std::clone::DeepClone for Color {
+    fn deep_clone(&self) -> Color {
+      unsafe {
+        let foreign_result = clutter_color_copy(self.opaque as *std::libc::c_void);
+        return foreign_result;
+      }
+    }
+  }
+
+  extern {
+  }
+
+  impl std::ops::Drop for Color {
+    fn drop(&mut self) {
+      unsafe {
+        clutter_color_free(self.opaque);
+      }
+    }
+  }
+
+  extern {
+    fn clutter_color_free(self_value: *mut std::libc::c_void);
+  }
+}
+
 pub mod actor {
   use std;
   use cairo;
@@ -1493,6 +1680,317 @@ pub mod content {
   extern {
     fn clutter_content_get_preferred_size(self_value: *mut std::libc::c_void, width: *mut f32, height: *mut f32) -> i32;
     fn clutter_content_invalidate(self_value: *mut std::libc::c_void);
+  }
+}
+
+pub mod text {
+  use std;
+  use super::actor::Actor;
+  use super::content::Content;
+
+  pub struct TextRef {
+    opaque: *mut std::libc::c_void
+  }
+
+  impl TextRef {
+    pub fn new() -> TextRef {
+      unsafe {
+        let foreign_result = clutter_text_new();
+        return foreign_result;
+      }
+    }
+
+    pub fn new_full(font_name: &str, text: &str, color: super::color::Color) -> TextRef {
+      unsafe {
+        use std::c_str::ToCStr;
+        use std::c_str::ToCStr;
+        let foreign_result = clutter_text_new_full(font_name.to_c_str().unwrap(), text.to_c_str().unwrap(), color);
+        return foreign_result;
+      }
+    }
+
+    pub fn new_with_text(font_name: &str, text: &str) -> TextRef {
+      unsafe {
+        use std::c_str::ToCStr;
+        use std::c_str::ToCStr;
+        let foreign_result = clutter_text_new_with_text(font_name.to_c_str().unwrap(), text.to_c_str().unwrap());
+        return foreign_result;
+      }
+    }
+
+    pub fn new_with_buffer<T: Buffer>(buffer: &T) -> TextRef {
+      unsafe {
+        let foreign_result = clutter_text_new_with_buffer(buffer.as_buffer());
+        return foreign_result;
+      }
+    }
+  }
+
+  pub trait Text {
+    fn as_text(&self) -> *mut std::libc::c_void;
+
+    fn set_color(&mut self, color: &super::color::Color) {
+      unsafe {
+        clutter_text_set_color(self.as_text(), color.opaque as *std::libc::c_void);
+      }
+    }
+
+    fn get_color(&mut self) -> super::color::Color {
+      unsafe {
+        let foreign_result = clutter_text_get_color(self.as_text());
+        return foreign_result;
+      }
+    }
+
+    fn set_font_name(&mut self, text: &str) {
+      unsafe {
+        use std::c_str::ToCStr;
+        clutter_text_set_font_name(self.as_text(), text.to_c_str().unwrap());
+      }
+    }
+
+    fn get_font_name(&mut self) -> std::c_str::CString {
+      unsafe {
+        let foreign_result = clutter_text_get_font_name(self.as_text());
+        return std::c_str::CString::new(foreign_result, false);
+      }
+    }
+
+    fn set_line_wrap(&mut self, fixed_position_set: bool) {
+      unsafe {
+        clutter_text_set_line_wrap(self.as_text(), (fixed_position_set as i32));
+      }
+    }
+
+    fn get_line_wrap(&mut self) -> bool {
+      unsafe {
+        let foreign_result = clutter_text_get_line_wrap(self.as_text());
+        return foreign_result != 0;
+      }
+    }
+
+    fn set_selectable(&mut self, fixed_position_set: bool) {
+      unsafe {
+        clutter_text_set_selectable(self.as_text(), (fixed_position_set as i32));
+      }
+    }
+
+    fn get_selectable(&mut self) -> bool {
+      unsafe {
+        let foreign_result = clutter_text_get_selectable(self.as_text());
+        return foreign_result != 0;
+      }
+    }
+
+    fn set_editable(&mut self, fixed_position_set: bool) {
+      unsafe {
+        clutter_text_set_editable(self.as_text(), (fixed_position_set as i32));
+      }
+    }
+
+    fn get_editable(&mut self) -> bool {
+      unsafe {
+        let foreign_result = clutter_text_get_editable(self.as_text());
+        return foreign_result != 0;
+      }
+    }
+
+    fn set_cursor_color(&mut self, color: &super::color::Color) {
+      unsafe {
+        clutter_text_set_cursor_color(self.as_text(), color.opaque as *std::libc::c_void);
+      }
+    }
+
+    fn get_cursor_color(&mut self) -> super::color::Color {
+      unsafe {
+        let foreign_result = clutter_text_get_cursor_color(self.as_text());
+        return foreign_result;
+      }
+    }
+
+    fn set_selection_color(&mut self, color: &super::color::Color) {
+      unsafe {
+        clutter_text_set_selection_color(self.as_text(), color.opaque as *std::libc::c_void);
+      }
+    }
+
+    fn get_selection_color(&mut self) -> super::color::Color {
+      unsafe {
+        let foreign_result = clutter_text_get_selection_color(self.as_text());
+        return foreign_result;
+      }
+    }
+
+    fn set_selected_text_color(&mut self, color: &super::color::Color) {
+      unsafe {
+        clutter_text_set_selected_text_color(self.as_text(), color.opaque as *std::libc::c_void);
+      }
+    }
+
+    fn get_selected_text_color(&mut self) -> super::color::Color {
+      unsafe {
+        let foreign_result = clutter_text_get_selected_text_color(self.as_text());
+        return foreign_result;
+      }
+    }
+  }
+
+  impl Text for TextRef {
+    fn as_text(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  impl Actor for TextRef {
+    fn as_actor(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  impl Content for TextRef {
+    fn as_content(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  extern {
+    fn clutter_text_new() -> TextRef;
+    fn clutter_text_new_full(font_name: *std::libc::c_char, text: *std::libc::c_char, color: super::color::Color) -> TextRef;
+    fn clutter_text_new_with_text(font_name: *std::libc::c_char, text: *std::libc::c_char) -> TextRef;
+    fn clutter_text_new_with_buffer(buffer: *mut std::libc::c_void) -> TextRef;
+    fn clutter_text_set_color(self_value: *mut std::libc::c_void, color: *std::libc::c_void);
+    fn clutter_text_get_color(self_value: *mut std::libc::c_void) -> super::color::Color;
+    fn clutter_text_set_font_name(self_value: *mut std::libc::c_void, text: *std::libc::c_char);
+    fn clutter_text_get_font_name(self_value: *mut std::libc::c_void) -> *i8;
+    fn clutter_text_set_line_wrap(self_value: *mut std::libc::c_void, fixed_position_set: i32);
+    fn clutter_text_get_line_wrap(self_value: *mut std::libc::c_void) -> i32;
+    fn clutter_text_set_selectable(self_value: *mut std::libc::c_void, fixed_position_set: i32);
+    fn clutter_text_get_selectable(self_value: *mut std::libc::c_void) -> i32;
+    fn clutter_text_set_editable(self_value: *mut std::libc::c_void, fixed_position_set: i32);
+    fn clutter_text_get_editable(self_value: *mut std::libc::c_void) -> i32;
+    fn clutter_text_set_cursor_color(self_value: *mut std::libc::c_void, color: *std::libc::c_void);
+    fn clutter_text_get_cursor_color(self_value: *mut std::libc::c_void) -> super::color::Color;
+    fn clutter_text_set_selection_color(self_value: *mut std::libc::c_void, color: *std::libc::c_void);
+    fn clutter_text_get_selection_color(self_value: *mut std::libc::c_void) -> super::color::Color;
+    fn clutter_text_set_selected_text_color(self_value: *mut std::libc::c_void, color: *std::libc::c_void);
+    fn clutter_text_get_selected_text_color(self_value: *mut std::libc::c_void) -> super::color::Color;
+  }
+
+  pub struct BufferRef {
+    opaque: *mut std::libc::c_void
+  }
+
+  impl BufferRef {
+    pub fn new() -> BufferRef {
+      unsafe {
+        let foreign_result = clutter_text_buffer_new();
+        return foreign_result;
+      }
+    }
+
+    pub fn new_with_text(text: &str) -> BufferRef {
+      unsafe {
+        use std::c_str::ToCStr;
+        let foreign_result = clutter_text_buffer_new_with_text(text.to_c_str().unwrap(), -1);
+        return foreign_result;
+      }
+    }
+  }
+
+  pub trait Buffer {
+    fn as_buffer(&self) -> *mut std::libc::c_void;
+
+    fn set_text(&mut self, text: &str) {
+      unsafe {
+        use std::c_str::ToCStr;
+        clutter_text_buffer_set_text(self.as_buffer(), text.to_c_str().unwrap(), -1);
+      }
+    }
+
+    fn get_text(&mut self) -> std::c_str::CString {
+      unsafe {
+        let foreign_result = clutter_text_buffer_get_text(self.as_buffer());
+        return std::c_str::CString::new(foreign_result, false);
+      }
+    }
+
+    fn get_bytes(&mut self) -> uint {
+      unsafe {
+        let foreign_result = clutter_text_buffer_get_bytes(self.as_buffer());
+        return foreign_result;
+      }
+    }
+
+    fn get_length(&mut self) -> i32 {
+      unsafe {
+        let foreign_result = clutter_text_buffer_get_length(self.as_buffer());
+        return foreign_result;
+      }
+    }
+
+    fn set_max_length(&mut self, max_length: i32) {
+      unsafe {
+        clutter_text_buffer_set_max_length(self.as_buffer(), max_length);
+      }
+    }
+
+    fn get_max_length(&mut self) -> i32 {
+      unsafe {
+        let foreign_result = clutter_text_buffer_get_max_length(self.as_buffer());
+        return foreign_result;
+      }
+    }
+
+    fn insert_text(&mut self, position: i32, chars: &str) -> i32 {
+      unsafe {
+        use std::c_str::ToCStr;
+        let foreign_result = clutter_text_buffer_insert_text(self.as_buffer(), position, chars.to_c_str().unwrap(), -1);
+        return foreign_result;
+      }
+    }
+
+    fn delete_text(&mut self, position: i32, n_chars: i32) -> i32 {
+      unsafe {
+        let foreign_result = clutter_text_buffer_delete_text(self.as_buffer(), position, n_chars);
+        return foreign_result;
+      }
+    }
+
+    fn emit_inserted_text(&mut self, position: i32, chars: &str) -> i32 {
+      unsafe {
+        use std::c_str::ToCStr;
+        let foreign_result = clutter_text_buffer_emit_inserted_text(self.as_buffer(), position, chars.to_c_str().unwrap(), -1);
+        return foreign_result;
+      }
+    }
+
+    fn emit_deleted_text(&mut self, position: i32, n_chars: i32) -> i32 {
+      unsafe {
+        let foreign_result = clutter_text_buffer_emit_deleted_text(self.as_buffer(), position, n_chars);
+        return foreign_result;
+      }
+    }
+  }
+
+  impl Buffer for BufferRef {
+    fn as_buffer(&self) -> *mut std::libc::c_void {
+      return self.opaque;
+    }
+  }
+
+  extern {
+    fn clutter_text_buffer_new() -> BufferRef;
+    fn clutter_text_buffer_new_with_text(text: *std::libc::c_char, utf8_len: i32) -> BufferRef;
+    fn clutter_text_buffer_set_text(self_value: *mut std::libc::c_void, text: *std::libc::c_char, utf8_len: i32);
+    fn clutter_text_buffer_get_text(self_value: *mut std::libc::c_void) -> *i8;
+    fn clutter_text_buffer_get_bytes(self_value: *mut std::libc::c_void) -> uint;
+    fn clutter_text_buffer_get_length(self_value: *mut std::libc::c_void) -> i32;
+    fn clutter_text_buffer_set_max_length(self_value: *mut std::libc::c_void, max_length: i32);
+    fn clutter_text_buffer_get_max_length(self_value: *mut std::libc::c_void) -> i32;
+    fn clutter_text_buffer_insert_text(self_value: *mut std::libc::c_void, position: i32, chars: *std::libc::c_char, n_chars: i32) -> i32;
+    fn clutter_text_buffer_delete_text(self_value: *mut std::libc::c_void, position: i32, n_chars: i32) -> i32;
+    fn clutter_text_buffer_emit_inserted_text(self_value: *mut std::libc::c_void, position: i32, chars: *std::libc::c_char, n_chars: i32) -> i32;
+    fn clutter_text_buffer_emit_deleted_text(self_value: *mut std::libc::c_void, position: i32, n_chars: i32) -> i32;
   }
 }
 
